@@ -37,4 +37,8 @@ public class DcsSetting {
                 new DcsTaskMessagePostProcessor(new Integer(delay.intValue())));
 
     }
+
+    public void manualInvokeTask(){
+        amqpTemplate.convertAndSend("dcs-task-queue","invoke task manually");
+    }
 }

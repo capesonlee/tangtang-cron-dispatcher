@@ -15,10 +15,17 @@ public class TaskController {
     @Autowired
     DcsSetting dcsSetting;
 
-    @RequestMapping("/hello")
-    public String hello(){
+    @RequestMapping("/auto")
+    public String auto(){
         String expression = "0/30 * * * * ?";
         dcsSetting.addNewIndicator(expression);
         return "hello to you";
+    }
+
+    @RequestMapping("/manual")
+    public String manual(){
+        dcsSetting.manualInvokeTask();
+        return "we will fire a task manually";
+
     }
 }
