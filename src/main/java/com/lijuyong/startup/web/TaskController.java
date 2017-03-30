@@ -1,8 +1,7 @@
 package com.lijuyong.startup.web;
 
-import com.lijuyong.startup.service.DcsSetting;
+import com.lijuyong.startup.service.TaskDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class TaskController {
 
     @Autowired
-    DcsSetting dcsSetting;
+    TaskDispatcher taskDispatcher;
 
     @RequestMapping("/auto")
     public String auto(){
         String expression = "0/30 * * * * ?";
-        dcsSetting.addNewIndicator(expression);
+        taskDispatcher.addNewIndicator(expression);
         return "hello to you";
     }
 
     @RequestMapping("/manual")
     public String manual(){
-        dcsSetting.manualInvokeTask();
+        taskDispatcher.manualInvokeTask();
         return "we will fire a task manually";
 
     }
