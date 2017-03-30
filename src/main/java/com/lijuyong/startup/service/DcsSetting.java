@@ -24,6 +24,11 @@ public class DcsSetting {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void addNewIndicator(String expression){
+
+        //to do: 与数据库配合
+        //这里应该有一个写数据库的动作，用于保存配置。
+
+
         CronTrigger cronTrigger = new CronTrigger(expression);
         TriggerContext triggerContext = new SimpleTriggerContext();
         Date date = cronTrigger.nextExecutionTime(triggerContext);
