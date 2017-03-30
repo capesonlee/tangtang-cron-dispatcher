@@ -17,7 +17,7 @@ public class TaskController {
 
     @RequestMapping("/hello")
     public String hello(){
-        String expression = "0/15 * * * * ?";
+        String expression = "0/30 * * * * ?";
         dcsSetting.addNewIndicator(expression);
         return "hello to you";
     }

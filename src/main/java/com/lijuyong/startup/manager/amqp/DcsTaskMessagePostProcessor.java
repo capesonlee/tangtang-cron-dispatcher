@@ -8,13 +8,17 @@ import org.springframework.amqp.core.MessagePostProcessor;
  * Created by john on 2017/3/28.
  */
 public class DcsTaskMessagePostProcessor implements MessagePostProcessor {
+    Integer delayMs;
     @Override
     public Message postProcessMessage(Message message) throws AmqpException{
 
 
        // message.getMessageProperties().setHeader("my-header","Hello John Nash");
-        message.getMessageProperties().setDelay(15000);//延迟5秒发送
+        message.getMessageProperties().setDelay(delayMs);//延迟5秒发送
         return  message;
+    }
+    public DcsTaskMessagePostProcessor(Integer delayMs){
+        this.delayMs = delayMs;
     }
 
 }

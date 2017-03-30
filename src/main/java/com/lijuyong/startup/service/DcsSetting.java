@@ -27,11 +27,14 @@ public class DcsSetting {
         CronTrigger cronTrigger = new CronTrigger(expression);
         TriggerContext triggerContext = new SimpleTriggerContext();
         Date date = cronTrigger.nextExecutionTime(triggerContext);
+        Date currentTime = new Date();
+        Long delay = date.getTime() - currentTime.getTime();
+        log.info("we will fire the event in sevreal minutes later {}",delay);
 
         amqpTemplate.convertAndSend("cron-task-exchange",
                 "cron-task-queue",
                 "command:time to retrieve data",
-                new DcsTaskMessagePostProcessor());
+                new DcsTaskMessagePostProcessor(new Integer(delay.intValue())));
 
     }
 }

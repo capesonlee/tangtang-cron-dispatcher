@@ -16,7 +16,7 @@ public class DcsTask {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @RabbitListener(queues = "cron-task-queue")
-    void doDcsTask(Channel channel,String msg){
+    void doDcsTask(String msg){
         log.info("here is the message:{}",msg);
     }
 }

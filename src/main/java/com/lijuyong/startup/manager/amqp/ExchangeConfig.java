@@ -16,9 +16,6 @@ public class ExchangeConfig {
     @Bean
     DirectExchange delayMessageExchange(AmqpAdmin amqpAdmin){
 
-        Map<String, Object> args = new IdentityHashMap<String, Object>();
-
-       // args.put("x-delayed-type","direct");
         DirectExchange directExchange =
                 new DirectExchange("cron-task-exchange");
 

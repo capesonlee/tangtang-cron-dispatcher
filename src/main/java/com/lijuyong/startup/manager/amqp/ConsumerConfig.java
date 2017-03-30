@@ -31,6 +31,7 @@ public class ConsumerConfig implements RabbitListenerConfigurer {
         factory.setConnectionFactory(connectionFactory);
         // factory.setPrefetchCount(5);
 
+        //必须手动恢复ack,否则消息不删除
         factory.setAcknowledgeMode(AcknowledgeMode.AUTO);
         return factory;
     }
