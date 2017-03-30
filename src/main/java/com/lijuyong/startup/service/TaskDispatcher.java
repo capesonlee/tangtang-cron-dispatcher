@@ -69,8 +69,14 @@ public class TaskDispatcher {
             //判断数据库中没有删除，那么发消息给下一个队列
             amqpTemplate.convertAndSend("dcs-task-queue",
                     "invoke task by cron expression");
+
+            //messageProperties 没有带过来，可以通过消息体带过来。
+            //如果过是cron 表达式那么需要重新评估，把上次执行的时间计入到消息体或者数据库中
+            //再次通过excutor评估
+            //addNewIndicator();
+            Integer delay = 15000;
+
             //并且发送ackg
-            Integer delay = 15000;//messageProperties 没有带过来，可以通过消息体带过来。
             channel.basicAck(tag,false);
 
             amqpTemplate.convertAndSend("cron-task-exchange",
