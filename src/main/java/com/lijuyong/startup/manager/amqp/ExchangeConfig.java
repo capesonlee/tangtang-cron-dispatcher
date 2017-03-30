@@ -22,6 +22,7 @@ public class ExchangeConfig {
         directExchange.setDelayed(true);
 
 
+
         amqpAdmin.declareExchange(directExchange);
         return directExchange;
     }
@@ -43,6 +44,12 @@ public class ExchangeConfig {
                .withQueueName();
        amqpAdmin.declareBinding(binding);
        return binding;
+   }
+
+   @Bean
+   Queue testQueue(){
+       Queue queue = new Queue("dcs-task-queue");
+       return queue;
    }
 
 }
