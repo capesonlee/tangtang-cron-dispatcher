@@ -4,40 +4,48 @@ import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 /**
  * Created by john on 2017/3/27.
  */
 @Configuration
 public class ExchangeConfig {
+
     @Bean
-    TopicExchange johnTopicExchange(AmqpAdmin amqpAdmin){
-        TopicExchange topicExchange =
-                new TopicExchange("john-topic",true,true);
-        amqpAdmin.declareExchange(topicExchange);
-        return  topicExchange;
+    DirectExchange delayMessageExchange(AmqpAdmin amqpAdmin){
+
+        Map<String, Object> args = new IdentityHashMap<String, Object>();
+
+       // args.put("x-delayed-type","direct");
+        DirectExchange directExchange =
+                new DirectExchange("cron-task-exchange");
+
+        directExchange.setDelayed(true);
+
+
+        amqpAdmin.declareExchange(directExchange);
+        return directExchange;
     }
 
     @Bean
-    Queue userQueue(AmqpAdmin amqpAdmin){
-        Queue queue = new Queue("seqQueue",true);
+    Queue cronTaskQueue(AmqpAdmin amqpAdmin){
+        Queue queue = new Queue("cron-task-queue");
         amqpAdmin.declareQueue(queue);
         return  queue;
     }
 
 
-    @Bean
-    Binding userQueueBindingToOrder(AmqpAdmin amqpAdmin, Queue userQueue, TopicExchange johnTopicExchange){
-        Binding binding = BindingBuilder.bind(userQueue).to(johnTopicExchange).
-                with("user.service");
-        amqpAdmin.declareBinding(binding);
-        return binding;
-    }
-    @Bean
-    Binding userQueueBindingToSeq(AmqpAdmin amqpAdmin,Queue userQueue,TopicExchange johnTopicExchange){
-        Binding binding = BindingBuilder.bind(userQueue).to(johnTopicExchange).
-                with("order.service");
-        amqpAdmin.declareBinding(binding);
-        return binding;
-    }
+   @Bean
+   Binding bindCronTaskQueue(AmqpAdmin amqpAdmin,
+                             Queue cronTaskQueue,
+                             DirectExchange delayMessageExchange){
+       Binding binding = BindingBuilder.bind(cronTaskQueue).
+               to(delayMessageExchange)
+               .withQueueName();
+       amqpAdmin.declareBinding(binding);
+       return binding;
+   }
 
 }
