@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskExcutor {
 
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     @Autowired
     AmqpTemplate amqpTemplate;
 
@@ -33,7 +36,8 @@ public class TaskExcutor {
         try {
 
             //这里真正的处理任务。
-            log.info("here is the message:{},tag is {}",msg,tag);
+            log.info("now {} here is the message:{},tag is {}",
+                    dateFormat.format(new Date()),msg,tag);
 
 
             //并且发送ackg

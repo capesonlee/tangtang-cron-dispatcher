@@ -33,7 +33,7 @@ public class TaskDispatcher {
     public void addNewIndicator(String expression){
 
         //to do: 与数据库配合
-        //这里应该有一个写数据库的动作，用于保存配置。
+        //这里应该有一个写数据库的动作，用于保存配 expression。
 
 
         CronTrigger cronTrigger = new CronTrigger(expression);
@@ -64,26 +64,28 @@ public class TaskDispatcher {
         log.info("here is the message:{},tag is {}",msg,tag);
 
         try {
-            //判断数据库中此条配置是否被删除，如果过删除那么,直接拒绝并且不入队列
-            //channel.basicReject(tag, false);
-            //判断数据库中没有删除，那么发消息给下一个队列
+
+            //1.0 从数据库中读取该条配置
+            //2.0 判断数据库中此条配置是否被删除，
+            //2.A 如果过删除那么直接拒绝并且不重入入队列，本函数流程结束。
+            //      channel.basicReject(tag, false);
+            //2.B 如果状态正常，那么发消息给下一个队列
             amqpTemplate.convertAndSend("dcs-task-queue",
                     "invoke task by cron expression");
 
-            //messageProperties 没有带过来，可以通过消息体带过来。
-            //如果过是cron 表达式那么需要重新评估，把上次执行的时间计入到消息体或者数据库中
-            //再次通过excutor评估
-            //addNewIndicator();
+
+            //3.0 根据数据库重新计算表达式expresion, 然后重新生成下轮的出发消息
+            //     这里模拟已经完成为15000
             Integer delay = 15000;
-
-            //并且发送ackg
-            channel.basicAck(tag,false);
-
             amqpTemplate.convertAndSend("cron-task-exchange",
                     "cron-task-queue",
                     "command:time to excute task",
                     new DelayMessagePostProcessor(delay));
-            //如果处理失败
+
+
+
+            //4.0  发送ack,表示此消息已经处理完成
+            channel.basicAck(tag,false);
         }
         catch (Exception exc){
             log.error("we hav exception",exc);
